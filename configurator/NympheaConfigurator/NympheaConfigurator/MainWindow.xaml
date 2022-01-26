@@ -1,0 +1,162 @@
+﻿<Window x:Class="NympheaConfigurator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NympheaConfigurator"
+        xmlns:c="clr-namespace:NympheaConfigurator.Comtrols"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        mc:Ignorable="d"
+        Title="Nymphea configurator" Height="692.666" Width="800">
+    <DockPanel LastChildFill="true" Margin="5">
+        <WrapPanel DockPanel.Dock="Top">
+            <Label Content="Local port"/>
+            <TextBox Text="{Binding LocalPort}" MaxLength="5" Width="35" VerticalContentAlignment="Center"/>
+            <Label Content="DeviceIP"/>
+            <TextBox Text="{Binding RemoteAddress}" MaxLength="15" Width="95" VerticalContentAlignment="Center"/>
+            <Label Content="Device port"/>
+            <TextBox Text="{Binding RemotePort}" MaxLength="5" Width="35" VerticalContentAlignment="Center"/>
+            <Label Content="Device ID"/>
+            <TextBox Text="{Binding RemoteID}" MaxLength="3" Width="30" VerticalContentAlignment="Center"/>
+
+            <Button Content="Get" Margin="5,0,0,0" Padding="5" Command="{Binding GetSettingsCmd}"/>
+            <Button Content="Reboot" Margin="5,0,0,0" Padding="5" Command="{Binding RebootDeviceCmd}"/>
+            <Button Content="Defaults" Margin="5,0,0,0" Padding="5" Command="{Binding DefaultCmd}" />
+        </WrapPanel>
+        <DockPanel DockPanel.Dock="Bottom" Height="100" LastChildFill="True"  Margin="0,5,0,0">
+            <WrapPanel DockPanel.Dock="Top">
+                <CheckBox Margin="0,0,5,0" Content="Temperature" IsChecked="{Binding Logger.ShowTemperature}"/>
+                <CheckBox Margin="0,0,5,0" Content="Service commands" IsChecked="{Binding Logger.ShowServiceCommands}"/>
+                <CheckBox Margin="0,0,5,0" Content="Only selected device" IsChecked="{Binding Logger.ShowOnlySelectedDevice}"></CheckBox>
+            </WrapPanel>
+            <local:ScrollingTextBox VerticalScrollBarVisibility="Auto" Text="{Binding Log, Mode=OneWay}" Margin="0,5,0,0"/>
+        </DockPanel>
+        <TabControl Margin="0,5,0,0">
+            <TabItem Header="Temperature">
+                <lvc:CartesianChart Margin="5" Series="{Binding TC.Series}" 
+                            LegendLocation="Right" 
+                            DisableAnimations="True" 
+                            Hoverable="False" DataTooltip="{x:Null}">
+                    <lvc:CartesianChart.ChartLegend>
+                        <c:CustomLvChartLegend Orientation="Vertical">
+                        </c:CustomLvChartLegend>
+                    </lvc:CartesianChart.ChartLegend>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="Temperature, °C"></lvc:Axis>
+                    </lvc:CartesianChart.AxisY>
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis   LabelFormatter="{Binding TC.DateTimeFormatter}" 
+                            Title="Time"
+                            MaxValue="{Binding TC.AxisMax}" 
+                            MinValue="{Binding TC.AxisMin}"
+                            Unit="{Binding TC.AxisUnit}">
+                        </lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                </lvc:CartesianChart>
+            </TabItem>
+            <TabItem Header="Configuration">
+                <WrapPanel>
+                    <GroupBox Header="Device ethernet settings" Margin="5">
+                        <StackPanel Margin="5">
+                            <WrapPanel Margin="0,0,0,0">
+                                <Label Content="Mode:" Width="100"/>
+                                <ComboBox ItemsSource="{Binding Settings.IPModeItems}" SelectedItem="{Binding Settings.EthernetIPMode}" Width="100" VerticalContentAlignment="Center"/>
+                                <Button Content="Set" Command="{Binding SetIPModeCmd}" Margin="10,0,0,0" Width="50"/>
+                            </WrapPanel>
+                            <WrapPanel Margin="0,5,0,0">
+                                <Label Content="IP Address:" Width="100"/>
+                                <TextBox Text="{Binding Settings.EthernetDeviceIP}" Width="100" VerticalContentAlignment="Center"/>
+                                <Button Content="Set" Command="{Binding SetEthernetDeviceIPCmd}" Margin="10,0,0,0" Width="50"/>
+                            </WrapPanel>
+                            <WrapPanel Margin="0,5,0,0">
+                                <Label Content="DNS:" Width="100"/>
+                                <TextBox Text="{Binding Settings.EthernetDeviceDNS}" Width="100" VerticalContentAlignment="Center"/>
+                                <Button Content="Set" Command="{Binding SetEthernetDeviceDNSCmd}" Margin="10,0,0,0" Width="50"/>
+                            </WrapPanel>
+                            <WrapPanel Margin="0,5,0,0">
+                                <Label Content="Subnet:" Width="100"/>
+                                <TextBox Text="{Binding Settings.EthernetDeviceSubnet}" Width="100" VerticalContentAlignment="Center"/>
+                                <Button Content="Set" Command="{Binding SetEthernetDeviceSubnetCmd}" Margin="10,0,0,0" Width="50"/>
+                            </WrapPanel>
+                            <WrapPanel Margin="0,5,0,0">
+                                <Label Content="Gateway:" Width="100"/>
+                                <TextBox Text="{Binding Settings.EthernetDeviceGW}" Width="100" VerticalContentAlignment="Center"/>
+                                <Button Content="Set" Command="{Binding SetEthernetDeviceGWCmd}" Margin="10,0,0,0" Width="50"/>
+                            </WrapPanel>
+                        </StackPanel>
+                    </GroupBox>
+                    <StackPanel>
+                        <GroupBox Header="Service settings" Margin="5">
+                            <StackPanel Margin="5">
+                                <WrapPanel>
+                                    <Label Content="Mode:" Width="100"/>
+                                    <ComboBox ItemsSource="{Binding Settings.ServiceIPModeItems}" SelectedItem="{Binding Settings.ServiceIPMode}" Width="100" VerticalContentAlignment="Center"/>
+                                    <Button Content="Set" Command="{Binding SetServiceIPModeCmd}" Margin="10,0,0,0" Width="50"/>
+                                </WrapPanel>
+                                <WrapPanel  Margin="0,5,0,0">
+                                    <Label Content="IP Address:" Width="100"/>
+                                    <TextBox Text="{Binding Settings.ServiceIP}" Width="100" VerticalContentAlignment="Center"/>
+                                    <Button Content="Set" Command="{Binding SetServiceIPCmd}" Margin="10,0,0,0" Width="50"/>
+                                </WrapPanel>
+                                <WrapPanel Margin="0,5,0,0">
+                                    <Label Content="Port:" Width="100"/>
+                                    <TextBox Text="{Binding Settings.ServicePort}" Width="100" VerticalContentAlignment="Center"/>
+                                    <Button Content="Set" Command="{Binding SetServicePortCmd}" Margin="10,0,0,0" Width="50"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Header="Temperature settings"  Margin="5">
+                            <WrapPanel Margin="5">
+                                <Label Content="Treshold:" Width="100"/>
+                                <TextBox Text="{Binding Settings.TemperatureTreshold}" Width="100" VerticalContentAlignment="Center"/>
+                                <Button Content="Set" Command="{Binding SetTemperatureTresholdCmd}"  Margin="10,0,0,0" Width="50"/>
+                            </WrapPanel>
+                        </GroupBox>
+                    </StackPanel>
+                    <GroupBox Header="Motion settings" Margin="5">
+                        <WrapPanel>
+                            <StackPanel Margin="5">
+                                <WrapPanel>
+                                    <Label Content="Current, mA:" Width="100"/>
+                                    <TextBox Text="{Binding Settings.MotorCurrent}" Width="100" VerticalContentAlignment="Center"/>
+                                    <Button Content="Set" Command="{Binding SetMotorCurrentCmd}" Margin="10,0,0,0" Width="50"/>
+                                </WrapPanel>
+                                <WrapPanel Margin="0,5,0,0">
+                                    <Label Content="Steps divider:"  Width="100"/>
+                                    <TextBox  Text="{Binding Settings.MotorStepsDivider}" Width="100" VerticalContentAlignment="Center" />
+                                    <Button Content="Set" Command="{Binding SetMotorStepsDividerCmd}" Margin="10,0,0,0" Width="50" />
+                                </WrapPanel>
+                                <WrapPanel Margin="0,5,0,0">
+                                    <Label Content="Bottom margin:"  Width="100"/>
+                                    <TextBox Text="{Binding Settings.MotorBottomMargin}" Width="100" VerticalContentAlignment="Center"/>
+                                    <Button Content="Set" Command="{Binding SetMotorBottomMarginCmd}" Margin="10,0,0,0" Width="50" />
+                                </WrapPanel>
+                            </StackPanel>
+                            <StackPanel Margin="5">
+                                <WrapPanel>
+                                    <Label Content="Speed, steps/s:"  Width="100"/>
+                                    <TextBox Text="{Binding Settings.MotorSpeed}" Width="100" VerticalContentAlignment="Center"  />
+                                    <Button Content="Set" Command="{Binding SetMotorSpeedCmd}" Margin="10,0,0,0" Width="50" />
+                                    <Button Content="SetEEPROM" Command="{Binding SetMotorSpeedEEPROMCmd}" Margin="10,0,0,0" Width="70" />
+                                </WrapPanel>
+                                <WrapPanel Margin="0,5,0,0">
+                                    <Label Content="Acceleration:"  Width="100"/>
+                                    <TextBox Text="{Binding Settings.MotorAcceleration}" Width="100" VerticalContentAlignment="Center" />
+                                    <Button Content="Set" Command="{Binding SetMotorAccelerationCmd}" Margin="10,0,0,0" Width="50" />
+                                    <Button Content="SetEEPROM" Command="{Binding SetMotorAccelerationEEPROMCmd}" Margin="10,0,0,0" Width="70" />
+                                </WrapPanel>
+                                <WrapPanel Margin="0,5,0,0">
+                                    <Label Content="Poll timer:"  Width="100"/>
+                                    <TextBox Text="{Binding Settings.MotorPollTimer}" Width="100" VerticalContentAlignment="Center" />
+                                    <Button Content="Set" Command="{Binding SetMotorPollTimerCmd}" Margin="10,0,0,0" Width="50" />
+                                    <Button Content="SetEEPROM" Command="{Binding SetMotorPollTimerEEPROMCmd}" Margin="10,0,0,0" Width="70" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </WrapPanel>
+                    </GroupBox>
+                </WrapPanel>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+
+</Window>
